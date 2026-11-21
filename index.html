@@ -62,6 +62,9 @@ input,select,textarea{
   width:100%;margin-top:7px;border:1.5px solid #d9d6f5;border-radius:10px;
   padding:11px 13px;background:#fff;color:var(--ink);transition:border .15s,box-shadow .15s;
 }
+.pw-wrap{position:relative;display:block;margin-top:7px}
+.pw-wrap input{margin-top:0;padding-right:44px}
+.pw-eye{position:absolute;right:8px;top:50%;transform:translateY(-50%);background:none;border:none;padding:6px;font-size:17px;line-height:1}
 input:focus,select:focus,textarea:focus{outline:none;border-color:#8b5cf6;box-shadow:0 0 0 3px #8b5cf622}
 textarea{min-height:45px;resize:vertical}
 .gds{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
@@ -240,7 +243,7 @@ tr:hover td{background:#fafaff}
     <p class="sub">লগইন করে আপনার হিসাবের তথ্য নিরাপদে ব্যবহার করুন</p>
     <form id="loginForm">
       <label>Email<input id="loginEmail" type="email" required placeholder="you@example.com" autocomplete="username"></label>
-      <label style="margin-top:12px">Password<input id="loginPass" type="password" required placeholder="••••••••" autocomplete="current-password"></label>
+      <label>Password<span class="pw-wrap"><input id="loginPass" type="password" required placeholder="••••••••" autocomplete="current-password"><button type="button" class="pw-eye" id="pwEye" tabindex="-1" title="Password দেখান/লুকান">👁</button></span></label>
       <div class="err" id="loginErr"></div>
       <div class="actions">
         <button type="submit">লগইন করুন</button>
@@ -315,6 +318,7 @@ $('signupBtn').onclick=async()=>{const email=$('loginEmail').value.trim(),passwo
   const{data,error}=await sb.auth.signUp({email,password});
   if(error)return $('loginErr').textContent='অ্যাকাউন্ট তৈরি হয়নি: '+error.message;
   if(data.session){enterApp()}else $('loginErr').textContent='অ্যাকাউন্ট তৈরি হয়েছে! Email-এ confirmation link আছে কিনা দেখুন, তারপর লগইন করুন।'};
+$('pwEye').onclick=()=>{const i=$('loginPass');i.type=i.type==='password'?'text':'password';$('pwEye').textContent=i.type==='password'?'👁':'🙈'};
 $('logoutBtn').onclick=async()=>{await sb.auth.signOut()};
 
 /* ---------- Data ---------- */
