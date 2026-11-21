@@ -10,6 +10,7 @@ Galileo, Sabre ও Amadeus Training Mode বিক্রির Purchase/Ledger �
 - 📒 Ledger: GDS (Galileo/Sabre/Amadeus), Payment method, Access type, date range দিয়ে ফিল্টার
 - 🖨 Print / PDF export (browser print → Save as PDF)
 - ✏️ Edit / Delete, CSV export, JSON backup/restore
+- 🔐 Supabase Auth login — email+password দিয়ে login, anonymous access বন্ধ (RLS authenticated-only)
 - 🔌 Supabase set না থাকলে localStorage-এ local mode-এ চলে
 
 ## Quick Start (Supabase সেটআপ — একবার)
@@ -33,5 +34,7 @@ npx serve .
 
 ## নোট
 
-- RLS policy anonymous full-access — personal use-এর জন্য ঠিক আছে।/পাবলিক ব্যবহার হলে Supabase Auth চালু করে policy বদলাতে হবে।
+- Database-এ **RLS ON + শুধু `authenticated` role** — publishable key leak হলেও login ছাড়া কেউ data পাবে না।
+- প্রথমবার অ্যাপ খুললে **"নতুন অ্যাকাউন্ট"** চাপা দিয়ে email+password দিয়ে register করুন।
+- Supabase Dashboard → **Authentication → Sign In / Providers → Email**-এ "Confirm email" বন্ধ রাখলে registration-এ সাথে সাথে login হয়; চালু থাকলে email-এ confirmation link ক্লিক করতে হবে।
 - `schema.sql`-এর শেষে sample data আছে (commented) — test করতে uncomment করে Run করুন।

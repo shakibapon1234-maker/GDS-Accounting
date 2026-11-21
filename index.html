@@ -96,6 +96,14 @@ tr:hover td{background:#fafaff}
 .sync{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px;background:#ecfdf5;color:#047857;border:1.5px solid #a7f3d0}
 .sync.local{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
 .sync.off{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+.login-screen{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:100;padding:20px;background:linear-gradient(135deg,#4c1d95,#1d4ed8 50%,#0e7490)}
+.login-screen.open{display:flex}
+.login-card{background:#fff;border-radius:20px;padding:34px;width:min(420px,100%);box-shadow:0 30px 80px #1e1b4b55;text-align:center}
+.login-card h2{margin:0 0 4px;font-size:24px}
+.login-card .sub{margin-bottom:20px}
+.login-card label{text-align:left}
+.login-card .actions{justify-content:center;margin-top:18px}
+.login-card .err{color:#be123c;font-size:13px;min-height:18px;margin-top:10px}
 .modal-bg{position:fixed;inset:0;background:#1e1b4b66;backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
 .modal-bg.open{display:flex}
 .modal{background:#fff;border-radius:18px;padding:26px;width:min(520px,100%);box-shadow:0 24px 60px #1e1b4b33;max-height:90vh;overflow:auto}
@@ -132,6 +140,7 @@ tr:hover td{background:#fafaff}
   <div class="hbtns">
     <span class="sync off" id="syncBadge">সংযোগ হচ্ছে…</span>
     <button class="secondary" id="settingsBtn" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)">⚙ Supabase Settings</button>
+    <button class="secondary" id="logoutBtn" hidden style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)">⎋ Logout</button>
     <button class="secondary" id="backup" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)">Backup ডাউনলোড</button>
   </div>
 </header>
@@ -224,6 +233,24 @@ tr:hover td{background:#fafaff}
   </section>
 </main>
 
+<!-- Login Screen (Supabase Auth) -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <h2>🔐 GDS হিসাবখাতা</h2>
+    <p class="sub">লগইন করে আপনার হিসাবের তথ্য নিরাপদে ব্যবহার করুন</p>
+    <form id="loginForm">
+      <label>Email<input id="loginEmail" type="email" required placeholder="you@example.com" autocomplete="username"></label>
+      <label style="margin-top:12px">Password<input id="loginPass" type="password" required placeholder="••••••••" autocomplete="current-password"></label>
+      <div class="err" id="loginErr"></div>
+      <div class="actions">
+        <button type="submit">লগইন করুন</button>
+        <button type="button" class="secondary" id="signupBtn">নতুন অ্যাকাউন্ট</button>
+      </div>
+    </form>
+    <p class="note" style="text-align:center">প্রথমবার ব্যবহার করলে "নতুন অ্যাকাউন্ট" চাপুন।</p>
+  </div>
+</div>
+
 <!-- Supabase Settings Modal -->
 <div class="modal-bg" id="settingsModal">
   <div class="modal">
@@ -253,19 +280,42 @@ const LS_KEY='gdsAccountingPurchases';
 const PAYMENTS=['bKash','Nagad','Rocket','Bank transfer','Cash','Card','Other'];
 const $=id=>document.getElementById(id);
 
+/* Supabase credentials — publishable key public-safe (RLS protected).
+   Override করতে চাইলে ⚙ Settings modal ব্যবহার করুন (localStorage-এ save হয়). */
+const DEFAULT_CFG={url:'https://axacilssvbzjbnqxveew.supabase.co',key:'sb_publishable_Iju7w42Xd3logk1_-RTYDw_V9fRn5oE'};
+
 /* ---------- Supabase client ---------- */
-let sb=null, cloudMode=false;
-function getCfg(){try{return JSON.parse(localStorage.getItem(CFG_KEY))}catch{return null}}
+let sb=null, cloudMode=false, session=null;
+function getCfg(){try{return JSON.parse(localStorage.getItem(CFG_KEY))||DEFAULT_CFG}catch{return DEFAULT_CFG}}
 function initSupabase(){
   const c=getCfg();
   if(!c||!c.url||!c.key){setBadge('local','Local Only — Supabase সেটআপ করা নেই');return}
   try{
     sb=supabase.createClient(c.url,c.key);
     cloudMode=true;
-    setBadge('ok','☁ Supabase যুক্ত — ক্লাউড সিঙ্ক চালু');
+    setBadge('ok','☁ Supabase যুক্ত — লগইন প্রয়োজন');
   }catch(e){cloudMode=false;setBadge('off','Supabase কানেক্ট হয়নি');}
 }
 function setBadge(cls,txt){const b=$('syncBadge');b.className='sync '+cls;b.textContent=txt}
+
+/* ---------- Auth ---------- */
+function showLogin(){session=null;$('loginScreen').classList.add('open');$('logoutBtn').hidden=true;setBadge('off','🔒 লগইন প্রয়োজন')}
+function enterApp(){session=session||{};$('loginScreen').classList.remove('open');$('logoutBtn').hidden=false;setBadge('ok','☁ Supabase যুক্ত — সিঙ্ক চালু');load().then(render)}
+async function initAuth(){
+  if(!cloudMode){$('loginScreen').classList.remove('open');$('logoutBtn').hidden=true;load().then(render);return}
+  const{data}=await sb.auth.getSession();
+  if(data.session){session=data.session;enterApp()}else showLogin();
+  sb.auth.onAuthStateChange((event,s)=>{if(s){session=s;enterApp()}else if(event==='SIGNED_OUT'){records=[];render();showLogin()}});
+}
+$('loginForm').onsubmit=async e=>{e.preventDefault();$('loginErr').textContent='';
+  const{error}=await sb.auth.signInWithPassword({email:$('loginEmail').value.trim(),password:$('loginPass').value});
+  if(error)$('loginErr').textContent='লগইন ব্যর্থ: '+(error.message||'ভুল email/password')};
+$('signupBtn').onclick=async()=>{const email=$('loginEmail').value.trim(),password=$('loginPass').value;$('loginErr').textContent='';
+  if(!email||!password)return $('loginErr').textContent='Email ও password দিন';
+  const{data,error}=await sb.auth.signUp({email,password});
+  if(error)return $('loginErr').textContent='অ্যাকাউন্ট তৈরি হয়নি: '+error.message;
+  if(data.session){enterApp()}else $('loginErr').textContent='অ্যাকাউন্ট তৈরি হয়েছে! Email-এ confirmation link আছে কিনা দেখুন, তারপর লগইন করুন।'};
+$('logoutBtn').onclick=async()=>{await sb.auth.signOut()};
 
 /* ---------- Data ---------- */
 let records=[],editing=null;
@@ -390,12 +440,12 @@ $('testConn').onclick=async()=>{const url=$('sbUrl').value.trim(),key=$('sbKey')
 $('saveSettings').onclick=()=>{const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim();
   if(!url||!key)return alert('Project URL ও anon key আবশ্যক');
   localStorage.setItem(CFG_KEY,JSON.stringify({url,key}));
-  $('settingsModal').classList.remove('open');initSupabase();load().then(render)};
+  $('settingsModal').classList.remove('open');initSupabase();initAuth();};
 
 /* ---------- Init ---------- */
 $('date').value=today();
 initSupabase();
-load().then(render);
+initAuth();
 </script>
 </body>
 </html>

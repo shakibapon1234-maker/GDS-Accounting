@@ -44,16 +44,22 @@ select
 from public.purchases
 order by purchased_on desc, created_at desc;
 
+-- Grants: শুধু authenticated (logged-in) user-রা access পাবে — anon (=key leak হলেও) পাবে না
+grant select, insert, update, delete on public.purchases to authenticated;
+grant select on public.ledger to authenticated;
+revoke all on public.purchases from anon;
+revoke all on public.ledger from anon;
+
 -- ============================================================
--- Row Level Security
--- Personal/small-business app: anonymous access allowed.
--- (Secure করতে চাইলে Supabase Auth চালু করে policies বদলাবেন)
+-- Row Level Security — ON, শুধু authenticated user-দের জন্য
+-- (key leak হলেও login ছাড়া কেউ data দেখতে/বদলাতে পারবে না)
 -- ============================================================
 alter table public.purchases enable row level security;
 
 drop policy if exists "anon all purchases" on public.purchases;
-create policy "anon all purchases" on public.purchases
-  for all using (true) with check (true);
+drop policy if exists "auth all purchases" on public.purchases;
+create policy "auth all purchases" on public.purchases
+  for all to authenticated using (true) with check (true);
 
 -- ============================================================
 -- Sample data (optional — test করতে)
