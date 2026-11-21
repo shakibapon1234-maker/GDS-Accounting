@@ -1,17 +1,401 @@
 <!doctype html>
 <html lang="bn">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>GDS হিসাবখাতা</title>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GDS হিসাবখাতা</title>
 <style>
-:root{--ink:#14213d;--muted:#64748b;--line:#dbe5f0;--bg:#f4f7fb;--brand:#155eef;--teal:#008b8b;--card:#fff}*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",Arial,sans-serif;background:var(--bg);color:var(--ink)}header{background:linear-gradient(120deg,#102a52,#155eef);color:#fff;padding:32px max(24px,calc((100% - 1400px)/2));display:flex;justify-content:space-between;gap:16px;align-items:center}h1{margin:0;font-size:29px}header p{margin:6px 0 0;opacity:.83}.wrap{max-width:1400px;margin:26px auto;padding:0 24px}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}.stat,.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;box-shadow:0 3px 14px #183b5610}.stat{padding:17px}.stat span{color:var(--muted);font-size:13px}.stat strong{display:block;font-size:25px;margin-top:5px}.panel{padding:24px;margin-bottom:22px}.panel h2{margin:0 0 5px;font-size:21px}.sub{color:var(--muted);margin:0 0 20px;font-size:14px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}.wide{grid-column:span 2}label{font-weight:650;font-size:14px;display:block}input,select,textarea,button{font:inherit}input,select,textarea{width:100%;margin-top:7px;border:1px solid #b9cbe0;border-radius:8px;padding:11px;background:white;color:var(--ink)}textarea{min-height:45px;resize:vertical}.gds{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}.gds label{font-weight:500;background:#f4f8fe;border:1px solid #b9cbe0;border-radius:8px;padding:9px 12px}.gds input{width:auto;margin:0 6px 0 0}.actions{display:flex;gap:10px;margin-top:20px}button{border:0;border-radius:8px;padding:11px 18px;font-weight:700;cursor:pointer;background:var(--brand);color:#fff}button.secondary{background:#eaf0f8;color:#193554}button.danger{background:#fff1f2;color:#be123c;padding:7px 10px;font-size:12px}.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin:17px 0}.toolbar input{margin:0;max-width:370px}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools button{padding:8px 12px;font-size:13px}table{width:100%;border-collapse:collapse;font-size:14px}th,td{text-align:left;padding:12px 10px;border-bottom:1px solid var(--line);vertical-align:top}th{color:#50627a;background:#f8fafc;white-space:nowrap}.badge{display:inline-block;padding:3px 8px;border-radius:30px;background:#e8f0ff;color:#155eef;font-size:12px;font-weight:700;margin:1px}.life{background:#e8faf4;color:#087c5c}.limited{background:#fff3dc;color:#9a5b00}.empty{text-align:center;color:var(--muted);padding:30px}.note{font-size:12px;color:var(--muted);margin-top:14px}@media(max-width:900px){.stats,.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}table{min-width:1000px}.table-wrap{overflow:auto}}@media(max-width:550px){header{padding:22px;display:block}.stats,.grid{grid-template-columns:1fr}.wide{grid-column:auto}.wrap{padding:0 14px}.panel{padding:17px}.toolbar{align-items:stretch;flex-direction:column}}
-</style></head>
-<body><header><div><h1>GDS হিসাবখাতা</h1><p>Galileo, Sabre ও Amadeus Training Mode বিক্রির এক জায়গার রেকর্ড</p></div><button class="secondary" id="backup">Backup ডাউনলোড</button></header>
-<main class="wrap"><section class="stats"><div class="stat"><span>মোট Purchase</span><strong id="count">0</strong></div><div class="stat"><span>মোট বিক্রি</span><strong id="revenue">৳0</strong></div><div class="stat"><span>Lifetime Access</span><strong id="lifetime">0</strong></div><div class="stat"><span>Limited Access</span><strong id="limited">0</strong></div></section>
-<section class="panel"><h2 id="formTitle">নতুন Purchase Record</h2><p class="sub">সব GDS-এর ক্রেতার তথ্য এক জায়গায় সংরক্ষণ করুন।</p><form id="form"><div class="grid"><label>Buyer নাম<input id="name" required placeholder="পূর্ণ নাম"></label><label>Phone number<input id="phone" required placeholder="01XXXXXXXXX"></label><label class="wide">Address<textarea id="address" placeholder="সম্পূর্ণ ঠিকানা"></textarea></label><label>Purchase amount (BDT)<input id="amount" required type="number" min="0" step="1" placeholder="যেমন 1500"></label><label>Payment method<select id="payment" required><option value="">পদ্ধতি বাছাই করুন</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank transfer</option><option>Cash</option><option>Card</option><option>Other</option></select></label><label>Purchase date<input id="date" type="date" required></label><label>Access duration<select id="access"><option value="Lifetime">Lifetime access</option><option value="Limited">Limited time</option></select></label><label id="daysBox">Duration (days)<input id="days" type="number" min="1" placeholder="যেমন 30"></label><div class="wide"><label>কোন GDS দেওয়া হয়েছে?</label><div class="gds"><label><input type="checkbox" name="gds" value="Galileo">Galileo</label><label><input type="checkbox" name="gds" value="Sabre">Sabre</label><label><input type="checkbox" name="gds" value="Amadeus">Amadeus</label></div></div><label class="wide">Note (ঐচ্ছিক)<textarea id="note" placeholder="ID, discount, বা অন্য কোনো তথ্য"></textarea></label></div><div class="actions"><button type="submit">Purchase Save করুন</button><button type="button" class="secondary" id="cancel" hidden>বাতিল</button></div></form><p class="note">তথ্য এই browser-এর local storage-এ থাকে। নিয়মিত Backup ডাউনলোড করে নিরাপদে রাখুন।</p></section>
-<section class="panel"><h2>Purchase History</h2><div class="toolbar"><input id="search" placeholder="নাম, ফোন, GDS বা payment method দিয়ে খুঁজুন"><div class="tools"><button class="secondary" id="exportCsv">CSV Export</button><button class="secondary" id="restore">Backup Restore</button><input type="file" id="restoreFile" accept="application/json" hidden></div></div><div class="table-wrap"><table><thead><tr><th>Date</th><th>Buyer / Contact</th><th>GDS</th><th>Access</th><th>Payment</th><th>Amount</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div></section></main>
+:root{
+  --ink:#1e1b4b;--muted:#64748b;--line:#e6e9f5;--card:rgba(255,255,255,.92);
+  --brand:#6d28d9;--brand2:#0284c7;--teal:#0d9488;--pink:#db2777;--amber:#d97706;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;font-family:system-ui,-apple-system,"Noto Sans Bengali",Arial,sans-serif;
+  color:var(--ink);min-height:100vh;position:relative;overflow-x:hidden;
+  background:linear-gradient(135deg,#fdf2f8 0%,#eff6ff 30%,#ecfeff 60%,#f5f3ff 100%);
+}
+/* colorful animated blobs */
+.blob{position:fixed;border-radius:50%;filter:blur(90px);opacity:.5;z-index:-1;animation:drift 22s ease-in-out infinite alternate}
+.blob.b1{width:520px;height:520px;background:#c084fc;top:-140px;left:-120px}
+.blob.b2{width:460px;height:460px;background:#38bdf8;top:20%;right:-160px;animation-delay:-6s}
+.blob.b3{width:420px;height:420px;background:#f9a8d4;bottom:-160px;left:30%;animation-delay:-12s}
+.blob.b4{width:380px;height:380px;background:#6ee7b7;bottom:10%;right:20%;animation-delay:-4s}
+@keyframes drift{from{transform:translate(0,0) scale(1)}to{transform:translate(60px,40px) scale(1.12)}}
+header{
+  background:linear-gradient(120deg,#7c3aed,#2563eb 45%,#0891b2);
+  color:#fff;padding:30px max(24px,calc((100% - 1400px)/2));
+  display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;
+  box-shadow:0 10px 30px #4c1d951f;
+}
+h1{margin:0;font-size:29px;letter-spacing:.3px}
+header p{margin:6px 0 0;opacity:.88}
+.hbtns{display:flex;gap:10px;flex-wrap:wrap}
+.wrap{max-width:1400px;margin:26px auto;padding:0 24px 60px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:15px;margin-bottom:22px}
+.stat{
+  background:var(--card);border:1px solid var(--line);border-radius:16px;padding:17px 18px;
+  box-shadow:0 6px 20px #312e8112;position:relative;overflow:hidden;
+}
+.stat::before{content:'';position:absolute;left:0;top:0;bottom:0;width:5px}
+.stat:nth-child(1)::before{background:linear-gradient(#8b5cf6,#d946ef)}
+.stat:nth-child(2)::before{background:linear-gradient(#0ea5e9,#22d3ee)}
+.stat:nth-child(3)::before{background:linear-gradient(#f59e0b,#f97316)}
+.stat:nth-child(4)::before{background:linear-gradient(#10b981,#34d399)}
+.stat span{color:var(--muted);font-size:13px;font-weight:600}
+.stat strong{display:block;font-size:25px;margin-top:5px}
+.stat:nth-child(1) strong{color:#7c3aed}.stat:nth-child(2) strong{color:#0284c7}
+.stat:nth-child(3) strong{color:#d97706}.stat:nth-child(4) strong{color:#059669}
+.panel{
+  background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px;
+  margin-bottom:22px;box-shadow:0 8px 26px #312e8114;backdrop-filter:blur(6px);
+}
+.panel h2{margin:0 0 5px;font-size:21px}
+.panel h2 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px;vertical-align:middle}
+.sub{color:var(--muted);margin:0 0 20px;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.wide{grid-column:span 2}
+label{font-weight:650;font-size:14px;display:block}
+input,select,textarea,button{font:inherit}
+input,select,textarea{
+  width:100%;margin-top:7px;border:1.5px solid #d9d6f5;border-radius:10px;
+  padding:11px 13px;background:#fff;color:var(--ink);transition:border .15s,box-shadow .15s;
+}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#8b5cf6;box-shadow:0 0 0 3px #8b5cf622}
+textarea{min-height:45px;resize:vertical}
+.gds{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.gds label{font-weight:500;background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1.5px solid #d9d6f5;border-radius:10px;padding:9px 14px;cursor:pointer;transition:.15s}
+.gds label:hover{border-color:#8b5cf6;transform:translateY(-1px)}
+.gds input{width:auto;margin:0 7px 0 0;accent-color:#7c3aed}
+.actions{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+button{border:0;border-radius:10px;padding:11px 20px;font-weight:700;cursor:pointer;background:linear-gradient(120deg,#7c3aed,#2563eb);color:#fff;transition:transform .12s,box-shadow .12s}
+button:hover{transform:translateY(-1px);box-shadow:0 6px 16px #7c3aed44}
+button:active{transform:translateY(0)}
+button.secondary{background:linear-gradient(120deg,#eef2ff,#e0f2fe);color:#3730a3;border:1.5px solid #c7d2fe}
+button.danger{background:linear-gradient(120deg,#fff1f2,#ffe4e6);color:#be123c;border:1.5px solid #fecdd3;padding:7px 12px;font-size:12px}
+.toolbar{display:flex;gap:10px;justify-content:space-between;align-items:center;margin:17px 0;flex-wrap:wrap}
+.toolbar input{margin:0;max-width:340px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:14px 0 4px;padding:14px;border-radius:12px;background:linear-gradient(135deg,#f8f7ff,#eff6ff);border:1px dashed #c7d2fe}
+.filters label{font-size:12.5px;color:#4c1d95}
+.filters select,.filters input{font-size:13px;padding:9px 10px;margin-top:4px}
+.table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;background:#fff}
+th{background:linear-gradient(120deg,#ede9fe,#dbeafe);color:#3730a3;font-size:12.5px;text-transform:uppercase;letter-spacing:.4px;padding:12px 10px;text-align:left;white-space:nowrap}
+td{padding:12px 10px;border-top:1px solid #eef0f8;font-size:14px;vertical-align:top}
+tr:hover td{background:#fafaff}
+.badge{display:inline-block;border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;margin:1px 2px 1px 0}
+.badge.galileo{background:linear-gradient(120deg,#ede9fe,#ddd6fe);color:#6d28d9}
+.badge.sabre{background:linear-gradient(120deg,#dbeafe,#bfdbfe);color:#1d4ed8}
+.badge.amadeus{background:linear-gradient(120deg,#ccfbf1,#99f6e4);color:#0f766e}
+.badge.life{background:linear-gradient(120deg,#fef3c7,#fde68a);color:#92400e}
+.badge.limited{background:linear-gradient(120deg,#ffe4e6,#fecdd3);color:#9f1239}
+.empty{text-align:center;color:var(--muted);padding:40px!important}
+.note{font-size:12px;color:var(--muted);margin-top:14px}
+.sync{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;padding:6px 14px;border-radius:999px;background:#ecfdf5;color:#047857;border:1.5px solid #a7f3d0}
+.sync.local{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+.sync.off{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+.modal-bg{position:fixed;inset:0;background:#1e1b4b66;backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}
+.modal-bg.open{display:flex}
+.modal{background:#fff;border-radius:18px;padding:26px;width:min(520px,100%);box-shadow:0 24px 60px #1e1b4b33;max-height:90vh;overflow:auto}
+.modal h3{margin:0 0 6px;font-size:20px}
+.modal .sub{margin-bottom:16px}
+.modal .actions{justify-content:flex-end}
+.tutorial{background:linear-gradient(135deg,#f5f3ff,#eff6ff);border:1px solid #ddd6fe;border-radius:12px;padding:14px 16px;font-size:13.5px;line-height:1.8;margin-top:6px}
+.tutorial code{background:#ede9fe;padding:1px 6px;border-radius:6px;font-size:12px}
+@media(max-width:1000px){.grid{grid-template-columns:repeat(2,1fr)}.wide{grid-column:span 2}.stats{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.grid{grid-template-columns:1fr}.wide{grid-column:span 1}.stats{grid-template-columns:1fr 1fr}h1{font-size:23px}}
+/* ===== Print / PDF ===== */
+@media print{
+  body{background:#fff}
+  .blob,header,.stats,.panel:not(#ledgerPanel),.modal-bg,.no-print{display:none!important}
+  .wrap{max-width:100%;margin:0;padding:0}
+  #ledgerPanel{box-shadow:none;border:none;padding:0}
+  #ledgerPanel h2::before{content:'GDS Purchase Ledger\A';white-space:pre;font-size:20px;font-weight:800;color:#1e1b4b;display:block;margin-bottom:4px}
+  .filters,.toolbar,.actions{display:none!important}
+  table{font-size:12px}
+  th{background:#eee!important;color:#000;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  tr{page-break-inside:avoid}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div>
+
+<header>
+  <div>
+    <h1>GDS হিসাবখাতা</h1>
+    <p>Galileo, Sabre ও Amadeus Training Mode বিক্রির এক জায়গার রেকর্ড</p>
+  </div>
+  <div class="hbtns">
+    <span class="sync off" id="syncBadge">সংযোগ হচ্ছে…</span>
+    <button class="secondary" id="settingsBtn" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)">⚙ Supabase Settings</button>
+    <button class="secondary" id="backup" style="background:rgba(255,255,255,.18);color:#fff;border-color:rgba(255,255,255,.4)">Backup ডাউনলোড</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="stats">
+    <div class="stat"><span>মোট Purchase</span><strong id="count">0</strong></div>
+    <div class="stat"><span>মোট বিক্রি</span><strong id="revenue">৳0</strong></div>
+    <div class="stat"><span>Lifetime Access</span><strong id="lifetime">0</strong></div>
+    <div class="stat"><span>Limited Access</span><strong id="limited">0</strong></div>
+  </section>
+
+  <section class="panel">
+    <h2 id="formTitle"><span class="dot" style="background:linear-gradient(120deg,#8b5cf6,#2563eb)"></span>নতুন Purchase Record</h2>
+    <p class="sub">সব GDS-এর ক্রেতার তথ্য এক জায়গায় সংরক্ষণ করুন।</p>
+    <form id="form">
+      <div class="grid">
+        <label>Buyer নাম<input id="name" required placeholder="পূর্ণ নাম"></label>
+        <label>Phone number<input id="phone" required placeholder="01XXXXXXXXX"></label>
+        <label class="wide">Address<textarea id="address" placeholder="সম্পূর্ণ ঠিকানা"></textarea></label>
+        <label>Purchase amount (BDT)<input id="amount" required type="number" min="0" step="1" placeholder="যেমন 1500"></label>
+        <label>Payment method<select id="payment" required><option value="">পদ্ধতি বাছাই করুন</option><option>bKash</option><option>Nagad</option><option>Rocket</option><option>Bank transfer</option><option>Cash</option><option>Card</option><option>Other</option></select></label>
+        <label>Purchase date<input id="date" type="date" required></label>
+        <label>Access duration<select id="access"><option value="Lifetime">Lifetime access</option><option value="Limited">Limited time</option></select></label>
+        <label id="daysBox">Duration (days)<input id="days" type="number" min="1" placeholder="যেমন 30"></label>
+        <div class="wide"><label>কোন GDS দেওয়া হয়েছে?</label>
+          <div class="gds">
+            <label><input type="checkbox" name="gds" value="Galileo">Galileo</label>
+            <label><input type="checkbox" name="gds" value="Sabre">Sabre</label>
+            <label><input type="checkbox" name="gds" value="Amadeus">Amadeus</label>
+          </div>
+        </div>
+        <label class="wide">Note (ঐচ্ছিক)<textarea id="note" placeholder="ID, discount, বা অন্য কোনো তথ্য"></textarea></label>
+      </div>
+      <div class="actions">
+        <button type="submit">Purchase Save করুন</button>
+        <button type="button" class="secondary" id="cancel" hidden>বাতিল</button>
+      </div>
+    </form>
+    <p class="note">তথ্য Supabase ক্লাউডে সংরক্ষিত থাকে — অন্য যেকোনো PC থেকে একই অ্যাকাউন্টে লগইন করে ব্যবহার করা যাবে।</p>
+  </section>
+
+  <section class="panel" id="ledgerPanel">
+    <h2><span class="dot" style="background:linear-gradient(120deg,#0ea5e9,#22d3ee)"></span>Ledger — Purchase History</h2>
+    <div class="toolbar no-print">
+      <input id="search" placeholder="নাম, ফোন, GDS বা payment method দিয়ে খুঁজুন">
+      <div class="tools">
+        <button class="secondary" id="printPdf">🖨 Print / PDF</button>
+        <button class="secondary" id="exportCsv">CSV Export</button>
+        <button class="secondary" id="restore">Backup Restore</button>
+        <input type="file" id="restoreFile" accept="application/json" hidden>
+      </div>
+    </div>
+
+    <div class="filters no-print">
+      <label>GDS Service
+        <select id="fGds">
+          <option value="">সবগুলো</option>
+          <option value="Galileo">Galileo</option>
+          <option value="Sabre">Sabre</option>
+          <option value="Amadeus">Amadeus</option>
+        </select>
+      </label>
+      <label>Payment Method
+        <select id="fPayment">
+          <option value="">সবগুলো</option>
+          <option>bKash</option><option>Nagad</option><option>Rocket</option>
+          <option>Bank transfer</option><option>Cash</option><option>Card</option><option>Other</option>
+        </select>
+      </label>
+      <label>Access Type
+        <select id="fAccess">
+          <option value="">সবগুলো</option>
+          <option value="Lifetime">Lifetime</option>
+          <option value="Limited">Limited</option>
+        </select>
+      </label>
+      <label>তারিখ থেকে<input id="fFrom" type="date"></label>
+      <label>তারিখ পর্যন্ত<input id="fTo" type="date"></label>
+      <label style="display:flex;align-items:flex-end"><button type="button" class="secondary" id="resetFilters" style="width:100%">ফিল্টার Clear</button></label>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Date</th><th>Buyer / Contact</th><th>GDS</th><th>Access</th><th>Payment</th><th>Amount</th><th class="no-print">Action</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <p class="note no-print" id="filterInfo"></p>
+  </section>
+</main>
+
+<!-- Supabase Settings Modal -->
+<div class="modal-bg" id="settingsModal">
+  <div class="modal">
+    <h3>⚙ Supabase Settings</h3>
+    <p class="sub">আপনার Supabase প্রজেক্টের URL ও anon key দিন। একবার দিলে সব PC-তে (localStorage-এ) সেভ থাকবে।</p>
+    <label>Project URL<input id="sbUrl" placeholder="https://xxxx.supabase.co"></label>
+    <label style="margin-top:12px">Anon (public) Key<input id="sbKey" placeholder="eyJhbGciOi..."></label>
+    <div class="actions">
+      <button type="button" class="secondary" id="testConn">সংযোগ পরীক্ষা</button>
+      <button type="button" id="saveSettings">Save করুন</button>
+      <button type="button" class="secondary" id="closeSettings">বন্ধ</button>
+    </div>
+    <div class="tutorial">
+      <b>প্রথমবার সেটআপ (৫ মিনিট):</b><br>
+      ১. <code>supabase.com</code>-এ ফ্রি অ্যাকাউন্ট খুলুন → New project তৈরি করুন<br>
+      ২. SQL Editor-এ গিয়ে <code>schema.sql</code> ফাইলের কোড paste করে Run করুন<br>
+      ৩. Settings → API থেকে <b>Project URL</b> ও <b>anon public key</b> কপি করুন<br>
+      ৪. এখানে paste করে Save করুন — PC থেকেও GitHub থেকে এই ফাইল চালু করে same settings দিলেই ডেটা সিঙ্ক হবে
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const key='gdsAccountingPurchases';let records=JSON.parse(localStorage.getItem(key)||'[]'),editing=null;const $=id=>document.getElementById(id);$('date').value=new Date().toISOString().slice(0,10);
-function money(n){return '৳'+Number(n||0).toLocaleString('en-BD')}function save(){localStorage.setItem(key,JSON.stringify(records));render()}function esc(v){return String(v||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function render(){const q=$('search').value.toLowerCase();const list=records.filter(r=>JSON.stringify(r).toLowerCase().includes(q));$('count').textContent=records.length;$('revenue').textContent=money(records.reduce((s,r)=>s+Number(r.amount),0));$('lifetime').textContent=records.filter(r=>r.access==='Lifetime').length;$('limited').textContent=records.filter(r=>r.access==='Limited').length;$('rows').innerHTML=list.length?list.map(r=>`<tr><td>${esc(r.date)}</td><td><b>${esc(r.name)}</b><br>${esc(r.phone)}<br><small>${esc(r.address)}</small></td><td>${r.gds.map(x=>'<span class="badge">'+esc(x)+'</span>').join('')}</td><td><span class="badge ${r.access==='Lifetime'?'life':'limited'}">${r.access}${r.access==='Limited'?' · '+r.days+' days':''}</span></td><td>${esc(r.payment)}<br><small>${esc(r.note)}</small></td><td><b>${money(r.amount)}</b></td><td><button class="secondary" onclick="editRecord('${r.id}')">Edit</button> <button class="danger" onclick="deleteRecord('${r.id}')">Delete</button></td></tr>`).join(''):'<tr><td colspan="7" class="empty">এখনও কোনো purchase record নেই।</td></tr>'}
-function reset(){editing=null;$('form').reset();$('date').value=new Date().toISOString().slice(0,10);$('access').value='Lifetime';toggleDays();$('formTitle').textContent='নতুন Purchase Record';$('cancel').hidden=true}function toggleDays(){$('daysBox').style.display=$('access').value==='Limited'?'block':'none';$('days').required=$('access').value==='Limited'}$('access').onchange=toggleDays;toggleDays();
-$('form').onsubmit=e=>{e.preventDefault();let gds=[...document.querySelectorAll('[name=gds]:checked')].map(x=>x.value);if(!gds.length)return alert('অন্তত একটি GDS নির্বাচন করুন।');let r={id:editing||crypto.randomUUID(),name:$('name').value.trim(),phone:$('phone').value.trim(),address:$('address').value.trim(),amount:$('amount').value,payment:$('payment').value,date:$('date').value,access:$('access').value,days:$('days').value,gds,note:$('note').value.trim()};if(editing)records=records.map(x=>x.id===editing?r:x);else records.unshift(r);save();reset()};window.editRecord=id=>{let r=records.find(x=>x.id===id);editing=id;['name','phone','address','amount','payment','date','access','days','note'].forEach(k=>$(k).value=r[k]||'');document.querySelectorAll('[name=gds]').forEach(x=>x.checked=r.gds.includes(x.value));toggleDays();$('formTitle').textContent='Purchase Record Edit করুন';$('cancel').hidden=false;scrollTo({top:0,behavior:'smooth'})};window.deleteRecord=id=>{if(confirm('এই record-টি মুছে ফেলবেন?')){records=records.filter(r=>r.id!==id);save()}};$('cancel').onclick=reset;$('search').oninput=render;
-function download(name,type,text){let a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)}$('backup').onclick=()=>download('gds-accounting-backup.json','application/json',JSON.stringify(records,null,2));$('exportCsv').onclick=()=>{let cols=['date','name','phone','address','gds','access','days','payment','amount','note'];download('gds-purchase-history.csv','text/csv;charset=utf-8',[cols.join(','),...records.map(r=>cols.map(c=>'"'+String(c==='gds'?r.gds.join(' + '):r[c]||'').replaceAll('"','""')+'"').join(','))].join('\n'))};$('restore').onclick=()=>$('restoreFile').click();$('restoreFile').onchange=e=>{let f=e.target.files[0];if(!f)return;let reader=new FileReader();reader.onload=()=>{try{let data=JSON.parse(reader.result);if(!Array.isArray(data))throw 0;if(confirm('বর্তমান records-এর জায়গায় backup restore করবেন?')){records=data;save();reset()}}catch{alert('সঠিক backup file নয়।')}};reader.readAsText(f)};render();
-</script></body></html>
+const CFG_KEY='gdsSupabaseConfig';
+const LS_KEY='gdsAccountingPurchases';
+const PAYMENTS=['bKash','Nagad','Rocket','Bank transfer','Cash','Card','Other'];
+const $=id=>document.getElementById(id);
+
+/* ---------- Supabase client ---------- */
+let sb=null, cloudMode=false;
+function getCfg(){try{return JSON.parse(localStorage.getItem(CFG_KEY))}catch{return null}}
+function initSupabase(){
+  const c=getCfg();
+  if(!c||!c.url||!c.key){setBadge('local','Local Only — Supabase সেটআপ করা নেই');return}
+  try{
+    sb=supabase.createClient(c.url,c.key);
+    cloudMode=true;
+    setBadge('ok','☁ Supabase যুক্ত — ক্লাউড সিঙ্ক চালু');
+  }catch(e){cloudMode=false;setBadge('off','Supabase কানেক্ট হয়নি');}
+}
+function setBadge(cls,txt){const b=$('syncBadge');b.className='sync '+cls;b.textContent=txt}
+
+/* ---------- Data ---------- */
+let records=[],editing=null;
+const today=()=>new Date().toISOString().slice(0,10);
+const money=n=>'৳'+Number(n||0).toLocaleString('en-BD');
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const gdsClass=g=>g==='Galileo'?'galileo':g==='Sabre'?'sabre':'amadeus';
+
+function toRow(r){return{id:r.id,name:r.name,phone:r.phone,address:r.address||'',amount:Number(r.amount)||0,payment:r.payment,purchased_on:r.date||r.purchased_on,access:r.access,days:r.days||null,gds:r.gds||[],note:r.note||''}}
+function fromRow(row){return{id:row.id,name:row.name,phone:row.phone,address:row.address,amount:row.amount,payment:row.payment,date:row.purchased_on,access:row.access,days:row.days,gds:row.gds||[],note:row.note}}
+
+async function load(){
+  if(cloudMode){
+    const{data,error}=await sb.from('purchases').select('*').order('purchased_on',{ascending:false}).order('created_at',{ascending:false});
+    if(!error){records=(data||[]).map(fromRow);return}
+    setBadge('off','সতর্কতা: Supabase থেকে ডেটা আনা যায়নি — Local mode');
+  }
+  records=JSON.parse(localStorage.getItem(LS_KEY)||'[]');
+}
+async function persistLocal(){localStorage.setItem(LS_KEY,JSON.stringify(records))}
+async function saveRecord(r){
+  const row=toRow(r);
+  if(cloudMode){const{error}=await sb.from('purchases').upsert(row);if(error){alert('সেভ হয়নি: '+error.message);return false}}
+  await persistLocal();return true;
+}
+async function deleteRecordRemote(id){
+  if(cloudMode){const{error}=await sb.from('purchases').delete().eq('id',id);if(error){alert('মুছা যায়নি: '+error.message);return false}}
+  return true;
+}
+
+/* ---------- Filters ---------- */
+function filtered(){
+  const q=$('search').value.toLowerCase();
+  return records.filter(r=>{
+    if(q&&!JSON.stringify(r).toLowerCase().includes(q))return false;
+    if($('fGds').value&&!(r.gds||[]).includes($('fGds').value))return false;
+    if($('fPayment').value&&r.payment!==$('fPayment').value)return false;
+    if($('fAccess').value&&r.access!==$('fAccess').value)return false;
+    if($('fFrom').value&&r.date<$('fFrom').value)return false;
+    if($('fTo').value&&r.date>$('fTo').value)return false;
+    return true;
+  });
+}
+
+/* ---------- Render ---------- */
+function render(){
+  const list=filtered();
+  $('count').textContent=records.length;
+  $('revenue').textContent=money(records.reduce((s,r)=>s+Number(r.amount),0));
+  $('lifetime').textContent=records.filter(r=>r.access==='Lifetime').length;
+  $('limited').textContent=records.filter(r=>r.access==='Limited').length;
+  $('rows').innerHTML=list.length?list.map(r=>`<tr>
+    <td>${esc(r.date)}</td>
+    <td><b>${esc(r.name)}</b><br>${esc(r.phone)}<br><small style="color:var(--muted)">${esc(r.address)}</small></td>
+    <td>${(r.gds||[]).map(x=>`<span class="badge ${gdsClass(x)}">${esc(x)}</span>`).join('')}</td>
+    <td><span class="badge ${r.access==='Lifetime'?'life':'limited'}">${r.access}${r.access==='Limited'?' · '+r.days+' days':''}</span></td>
+    <td>${esc(r.payment)}<br><small style="color:var(--muted)">${esc(r.note)}</small></td>
+    <td><b>${money(r.amount)}</b></td>
+    <td class="no-print"><button class="secondary" style="padding:6px 12px;font-size:12px" onclick="editRecord('${r.id}')">Edit ✎</button>
+        <button class="danger" onclick="deleteRecord('${r.id}')">Delete</button></td>
+  </tr>`).join(''):'<tr><td colspan="7" class="empty">ফিল্টারের সাথে মিলে এমন কোনো record নেই।</td></tr>';
+  const f=records.length!==list.length?` — ফিল্টারে ${list.length}টি দেখানো হচ্ছে`:' — মোট ${list.length}টি record';
+  $('filterInfo').textContent=f;
+}
+window.editRecord=id=>{const r=records.find(x=>x.id===id);if(!r)return;editing=id;
+  ['name','phone','address','amount','payment','date','access','days','note'].forEach(k=>$(k).value=r[k]||'');
+  document.querySelectorAll('[name=gds]').forEach(x=>x.checked=(r.gds||[]).includes(x.value));
+  toggleDays();$('formTitle').innerHTML='<span class="dot" style="background:linear-gradient(120deg,#f59e0b,#ef4444)"></span>Purchase Record Edit করুন';
+  $('cancel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
+window.deleteRecord=async id=>{if(!confirm('এই record-টি মুছে ফেলবেন?'))return;
+  if(await deleteRecordRemote(id)){records=records.filter(r=>r.id!==id);await persistLocal();render()}};
+
+/* ---------- Form ---------- */
+function reset(){editing=null;$('form').reset();$('date').value=today();$('access').value='Lifetime';toggleDays();
+  $('formTitle').innerHTML='<span class="dot" style="background:linear-gradient(120deg,#8b5cf6,#2563eb)"></span>নতুন Purchase Record';$('cancel').hidden=true}
+function toggleDays(){$('daysBox').style.display=$('access').value==='Limited'?'block':'none';$('days').required=$('access').value==='Limited'}
+$('access').onchange=toggleDays;toggleDays();$('date').value=today();
+$('cancel').onclick=reset;
+$('form').onsubmit=async e=>{e.preventDefault();
+  const gds=[...document.querySelectorAll('[name=gds]:checked')].map(x=>x.value);
+  if(!gds.length)return alert('অন্তত একটি GDS নির্বাচন করুন।');
+  const r={id:editing||crypto.randomUUID(),name:$('name').value.trim(),phone:$('phone').value.trim(),address:$('address').value.trim(),
+    amount:$('amount').value,payment:$('payment').value,date:$('date').value,access:$('access').value,
+    days:$('days').value,gds,note:$('note').value.trim()};
+  if(await saveRecord(r)){
+    if(editing)records=records.map(x=>x.id===editing?r:x);else records.unshift(r);
+    records.sort((a,b)=>(b.date||'').localeCompare(a.date||''));
+    render();reset();
+  }};
+
+/* ---------- Export / Import / Print ---------- */
+function download(name,type,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();URL.revokeObjectURL(a.href)}
+$('backup').onclick=()=>download('gds-accounting-backup.json','application/json',JSON.stringify(records,null,2));
+$('exportCsv').onclick=()=>{const cols=['date','name','phone','address','gds','access','days','payment','amount','note'];
+  download('gds-purchase-ledger.csv','text/csv;charset=utf-8',[cols.join(','),...records.map(r=>cols.map(c=>`"${String(c==='gds'?(r.gds||[]).join(' + '):r[c]||'').replaceAll('"','""')}"`).join(','))].join('\n'))};
+$('printPdf').onclick=()=>window.print();
+$('restore').onclick=()=>$('restoreFile').click();
+$('restoreFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;
+  const reader=new FileReader();
+  reader.onload=async()=>{try{const data=JSON.parse(reader.result);if(!Array.isArray(data))throw 0;
+    if(!confirm('বর্তমান records-এর জায়গায় backup restore করবেন?'))return;
+    if(cloudMode){await sb.from('purchases').delete().neq('id','00000000-0000-0000-0000-000000000000');
+      const rows=data.map(toRow);if(rows.length){const{error}=await sb.from('purchases').insert(rows);if(error){alert('Restore ব্যর্থ: '+error.message);return}}}
+    records=data;await persistLocal();render();reset();
+  }catch{alert('সঠিক backup file নয়।')}};reader.readAsText(f)};
+
+/* ---------- Filters wiring ---------- */
+['search','fGds','fPayment','fAccess','fFrom','fTo'].forEach(id=>$(id).addEventListener('input',render));
+$('resetFilters').onclick=()=>{$('search').value='';$('fGds').value='';$('fPayment').value='';$('fAccess').value='';$('fFrom').value='';$('fTo').value='';render()};
+
+/* ---------- Settings modal ---------- */
+$('settingsBtn').onclick=()=>{const c=getCfg()||{};$('sbUrl').value=c.url||'';$('sbKey').value=c.key||'';$('settingsModal').classList.add('open')};
+$('closeSettings').onclick=()=>$('settingsModal').classList.remove('open');
+$('settingsModal').addEventListener('click',e=>{if(e.target.id==='settingsModal')$('settingsModal').classList.remove('open')});
+$('testConn').onclick=async()=>{const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim();
+  if(!url||!key)return alert('URL ও Key দিন');
+  try{const t=supabase.createClient(url,key);
+    const{count,error}=await t.from('purchases').select('*',{count:'exact',head:true});
+    if(error)throw error;
+    alert('সং결াপিত! purchases টেবিলে '+(count??0)+'টি record আছে।');
+  }catch(err){alert('সংযোগ ব্যর্থ: '+(err.message||err))}};
+$('saveSettings').onclick=()=>{const url=$('sbUrl').value.trim(),key=$('sbKey').value.trim();
+  if(!url||!key)return alert('Project URL ও anon key আবশ্যক');
+  localStorage.setItem(CFG_KEY,JSON.stringify({url,key}));
+  $('settingsModal').classList.remove('open');initSupabase();load().then(render)};
+
+/* ---------- Init ---------- */
+$('date').value=today();
+initSupabase();
+load().then(render);
+</script>
+</body>
+</html>
